@@ -2,7 +2,7 @@
 #define MaxSize 100
 
 #include<iostream>
-
+#include<cmath>
 using namespace std;
 
 typedef int ElemType;
