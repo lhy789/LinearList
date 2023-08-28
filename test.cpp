@@ -457,6 +457,159 @@ bool ListErase_DuL(DuLinkList& L, const int i)
 	return true;
 }
 
+//一元多项式的合并 - 顺序链表版
+void PolyOperate(SqList2& L1, SqList2& L2, SqList2& L3)
+{
+	for (int i = 0; i < L1.length && i < L2.length; i++)
+	{
+		L3.elem[i] = L1.elem[i] + L2.elem[i];
+		L3.length++;
+	}
+	if (L1.length <= L2.length)
+	{
+		for (int j = L1.length; j < L2.length; j++)
+		{
+			L3.elem[j] = L2.elem[j];
+			L3.length++;
+		}
+	}
+	else
+	{
+		for (int j = L2.length; j < L1.length; j++)
+		{
+			L3.elem[j] = L1.elem[j];
+			L3.length++;
+		}
+	}
+}
+
+//稀疏多项式的相加
+//结构体的定义
+typedef struct
+{
+	int index;//指数
+	float coe;//系数
+}Elem1;
+
+typedef struct
+{
+	Elem1* elem;
+	int length;
+}SqList3; //要进行线性表的创建
+
+//函数的实现
+void SQL_I(SqList3& L1, SqList3& L2, SqList3& L3)
+{
+	Elem1* p1 = L1.elem;
+	Elem1* p1_last = p1 + L1.length - 1;
+	Elem1* p2 = L2.elem;
+	Elem1* p2_last = p2 + L2.length - 1;
+	Elem1* p3 = L3.elem;
+	while (p1 <= p1_last && p2 <= p2_last)
+	{
+		if (p1->index < p2->index)
+		{
+			p3->coe = p1->coe;
+			p3->index = p1->index;
+			p3++;
+			p1++;
+			L3.length++;
+		}
+		else if (p1->index > p2->index)
+		{
+			p3->coe = p2->coe;
+			p3->index = p2->index;
+			p3++;
+			p2++;
+			L3.length++;
+		}
+		else if (p1->index = p2->index)
+		{
+			p3->coe = p1->coe + p2->coe;
+			p3->index = p1->index;
+			p3++;
+			p1++;
+			p2++;
+			L3.length++;
+		}
+	}
+	while (p1 <= p1_last)
+	{
+		p3->coe = p1->coe;
+		p3->index = p1->index;
+		p1++;
+		p3++;
+		L3.length++;
+	}
+	while (p2 <= p2_last)
+	{
+		p3->coe = p2->coe;
+		p3->index = p2->index;
+		p2++;
+		p3++;
+		L3.length++;
+	}
+}
+
+LinkList mergeWithRecursive(LinkList& head1, LinkList& head2) {
+	if (head1 == NULL && head2 == NULL) {
+		return NULL;
+	}
+
+	if (head1 == NULL) {
+		return head2;
+	}
+
+	if (head2 == NULL) {
+		return head1;
+	}
+
+	// head1 & head2 not null
+	LinkList head = NULL;
+	if (head1->data <= head2->data) {
+		head = head1;
+		head->next = mergeWithRecursive(head->next, head2);
+	}
+	else {
+		head = head2;
+		head->next = mergeWithRecursive(head1, head->next);
+	}
+	return head;
+}
+
+
+void SPO_II(LinkList& La, LinkList& Lb, LinkList& Lc)
+{
+	Lnode* pa = La->next;
+	Lnode* pb = Lb->next;
+	Lc = La;
+	Lnode* pc = Lc;
+	while (pa && pb)
+	{
+		if (pa->data < pb->data)
+		{
+			pc->next = pa;
+			pc = pc->next;
+			pa = pa->next;
+		}
+		else if (pa->data > pb->data)
+		{
+			pc->next = pb;
+			pc = pc->next;
+			pb = pb->next;
+		}
+		else if (pa->data == pb->data)
+		{
+			pa->data += pb->data;
+			pc->next = pa;
+			pc = pc->next;
+			pa = pa->next;
+			pb = pb->next;
+		}
+	}
+	pc->next = (pa ? pa : pb);
+	delete Lb;
+}
 
 void test01()
 {
